@@ -1,10 +1,10 @@
-
 import Home from "./pages/Home/Home"
+import "./styles/global.css"
 
-function App(){
+function App() {
   return (
-    <div>
-      <Home/>
+    <div className="container">
+      <Home />
     </div>
   )
 }
