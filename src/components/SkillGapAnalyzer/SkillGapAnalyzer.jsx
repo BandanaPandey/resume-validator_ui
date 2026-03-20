@@ -1,64 +1,42 @@
-import { useState } from "react"
+import React, { useState } from "react";
+import SkillGapForm from "./SkillGapForm";
+import SkillGapResult from "./SkillGapResult";
 import { analyzeSkillGap } from "../../api/skillGapApi"
+import "./SkillGapAnalyzer.css";
 
-function SkillGapAnalyzer() {
-  const [resume, setResume] = useState("")
-  const [job, setJob] = useState("")
-  const [result, setResult] = useState(null)
+const SkillGapAnalyzer = () => {
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleAnalyze = async () => {
-    const res = await analyzeSkillGap({
-      resume,
-      job_description: job
-    })
-    setResult(res.data)
-  }
+  const handleAnalyze = async (resume, jobDesc) => {
+    setLoading(true);
+
+    try {
+      const response = await analyzeSkillGap({
+        resume_text: resume,
+        job_description: jobDesc,
+      });
+
+      setResult(response.data); // 👈 IMPORTANT
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Something went wrong");
+    }
+
+    setLoading(false);
+  };
 
   return (
-    <div className="card">
-      <h2>Skill Gap Analyzer</h2>
+    <div className="container">
+      <h1>AI Skill Gap Analyzer 🚀</h1>
 
-      <textarea
-        placeholder="Paste Resume"
-        onChange={(e) => setResume(e.target.value)}
-      />
+      <SkillGapForm onAnalyze={handleAnalyze} />
 
-      <textarea
-        placeholder="Paste Job Description"
-        onChange={(e) => setJob(e.target.value)}
-      />
+      {loading && <p>Analyzing...</p>}
 
-      <button onClick={handleAnalyze}>
-        Analyze Gap
-      </button>
-
-      {result && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Match Score: {result.match_score}%</h3>
-
-          <h4>Matched Skills</h4>
-          <ul>
-            {result.matched_skills.map((s, i) => <li key={i}>{s}</li>)}
-          </ul>
-
-          <h4>Missing Skills</h4>
-          <ul>
-            {result.missing_skills.map((s, i) => <li key={i}>{s}</li>)}
-          </ul>
-
-          <h4>Extra Skills</h4>
-          <ul>
-            {result.extra_skills.map((s, i) => <li key={i}>{s}</li>)}
-          </ul>
-
-          <h4>Recommendations</h4>
-          <ul>
-            {result.recommendations.map((r, i) => <li key={i}>{r}</li>)}
-          </ul>
-        </div>
-      )}
+      {result && <SkillGapResult result={result} />}
     </div>
-  )
-}
+  );
+};
 
-export default SkillGapAnalyzer
+export default SkillGapAnalyzer;
