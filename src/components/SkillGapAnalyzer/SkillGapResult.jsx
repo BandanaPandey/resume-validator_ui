@@ -1,75 +1,29 @@
 import React from "react";
+import ScoreCard from "./ScoreCard";
+import ScoreBreakdown from "./ScoreBreakdown";
+import SkillList from "./SkillList";
+import ProficiencyChart from "./ProficiencyChart";
+import Recommendations from "./Recommendations";
 
 const SkillGapResult = ({ result }) => {
-  const {
-    match_score = 0,
-    matched_skills = [],
-    missing_skills = [],
-    semantic_matches = [],
-    recommendations = [],
-  } = result;
+  if (!result) return null;
 
   return (
     <div className="result-container">
-      {/* Score */}
-      <div className="score-card">
-        <h2>Match Score</h2>
-        <div className="score">{match_score}%</div>
-      </div>
+      <ScoreCard result={result} />
 
-      {/* Matched Skills */}
-      <div className="section">
-        <h3>✅ Matched Skills</h3>
-        <ul>
-          {matched_skills.map((s, i) => (
-            <li key={i}>{s}</li>
-          ))}
-        </ul>
-      </div>
+      <ScoreBreakdown breakdown={result.score_breakdown} />
 
-      {/* Missing Skills */}
-      <div className="section">
-        <h3>❌ Missing Skills</h3>
-        <ul>
-          {missing_skills.map((s, i) => (
-            <li key={i}>{s}</li>
-          ))}
-        </ul>
-      </div>
+      <SkillList
+        matched={result.matched_skills}
+        missing={result.missing_skills}
+        critical={result.missing_critical_skills}
+        weak={result.weak_matched_skills}
+      />
 
-      {/* Semantic Matches */}
-      <div className="section">
-        <h3>🧠 Semantic Matches</h3>
+      <ProficiencyChart data={result.proficiency} />
 
-        <table>
-          <thead>
-            <tr>
-              <th>Job Skill</th>
-              <th>Your Skill</th>
-              <th>Match %</th>
-            </tr>
-          </thead>
-          <tbody>
-            {semantic_matches.map((item, i) => (
-              <tr key={i}>
-                <td>{item.job_skill}</td>
-                <td>{item.resume_skill}</td>
-                <td>{Math.round(item.score * 100)}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Recommendations */}
-      <div className="section">
-        <h3>💡 Recommendations</h3>
-        <ul>
-          {recommendations.map((rec, i) => (
-            <li key={i}>{rec}</li>
-          ))}
-        </ul>
-      </div>
+      <Recommendations items={result.recommendations} />
     </div>
   );
 };
