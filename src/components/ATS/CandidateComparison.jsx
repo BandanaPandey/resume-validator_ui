@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import CandidateSelector from "./CandidateSelector";
 import ComparisonTable from "./ComparisonTable";
+import AIComparisonSummary from "./AIComparisonSummary";
 
-const CandidateComparison = ({ candidates }) => {
+const CandidateComparison = ({ candidates, jobDescription }) => {
   const [selected, setSelected] = useState([]);
 
   const toggleSelect = (candidate) => {
@@ -28,7 +29,10 @@ const CandidateComparison = ({ candidates }) => {
       />
 
       {selected.length >= 2 && (
-        <ComparisonTable candidates={selected} />
+        <>
+          <ComparisonTable candidates={selected} />
+          <AIComparisonSummary selected={selected} jobDescription={jobDescription}/>
+        </>
       )}
     </div>
   );

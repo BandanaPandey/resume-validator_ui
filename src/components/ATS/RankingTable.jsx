@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import CandidateModal from "./CandidateModal";
 import CandidateComparison from "./CandidateComparison";
 
-const RankingTable = ({ data }) => {
+const RankingTable = ({ data, jobDescription }) => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   if (!data || data.length === 0) return null;
@@ -56,7 +56,7 @@ const RankingTable = ({ data }) => {
       )}
 
       {/* 🔥 Candidate Comparison (NEW) */}
-      <CandidateComparison candidates={data} />
+      <CandidateComparison candidates={data} jobDescription={jobDescription}/>
     </div>
   );
 };
