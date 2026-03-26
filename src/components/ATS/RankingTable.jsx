@@ -1,62 +1,44 @@
 // src/components/ATS/RankingTable.jsx
 import React, { useState } from "react";
-import CandidateModal from "./CandidateModal";
 import CandidateComparison from "./CandidateComparison";
+import CandidateCard from "./CandidateCard";
 
 const RankingTable = ({ data, jobDescription }) => {
-  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [selected, setSelected] = useState([]);
 
   if (!data || data.length === 0) return null;
 
-  // find highest score for highlight
-  const maxScore = Math.max(...data.map((c) => c.score));
+  const toggleSelect = (candidate) => {
+    const exists = selected.find(c => c.candidate_id === candidate.candidate_id);
+
+    if (exists) {
+      setSelected(selected.filter(c => c.candidate_id !== candidate.candidate_id));
+    } else if (selected.length < 3) {
+      setSelected([...selected, candidate]);
+    }
+  };
 
   return (
-    <div className="card">
-      <h3>🏆 Ranked Candidates</h3>
+    <div className="ranking-container">
+      <h2>🏆 Candidate Rankings</h2>
 
-      <table className="ranking-table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Candidate</th>
-            <th>Score</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
+      <div className="candidate-grid">
+        {data.map((candidate) => (
+          <CandidateCard
+            key={candidate.candidate_id}
+            candidate={candidate}
+            onSelect={() => toggleSelect(candidate)}
+            selected={selected.some(c => c.candidate_id === candidate.candidate_id)}
+          />
+        ))}
+      </div>
 
-        <tbody>
-          {data.map((c) => {
-            const isTop = c.score === maxScore;
-
-            return (
-              <tr
-                key={c.candidate_id}
-                className={isTop ? "top-candidate" : ""}
-                onClick={() => setSelectedCandidate(c)}
-              >
-                <td>{c.rank}</td>
-                <td>#{c.candidate_id}</td>
-                <td>
-                  <span className="score-badge">{c.score}</span>
-                </td>
-                <td>{c.summary}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      {/* 🔍 Candidate Details Modal */}
-      {selectedCandidate && (
-        <CandidateModal
-          data={selectedCandidate}
-          onClose={() => setSelectedCandidate(null)}
+      {selected.length >= 2 && (
+        <CandidateComparison
+          candidates={selected}
+          jobDescription={jobDescription}
         />
       )}
-
-      {/* 🔥 Candidate Comparison (NEW) */}
-      <CandidateComparison candidates={data} jobDescription={jobDescription}/>
     </div>
   );
 };
