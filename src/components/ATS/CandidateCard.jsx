@@ -1,8 +1,8 @@
-// src/components/ATS/CandidateCard.jsx
 import React from "react";
 
 const CandidateCard = ({ candidate, onSelect, selected }) => {
   const {
+    candidate_id,
     candidate_name,
     score,
     rank,
@@ -10,30 +10,73 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
     highlights,
     risks,
     recommendation,
+    decision,
+    confidence,
+    decision_reasons,
     score_breakdown
   } = candidate;
 
+  const decisionClass = decision
+    ? decision.toLowerCase().replace(/\s/g, "-")
+    : "";
+
+  const recommendationClass = recommendation
+    ? recommendation.toLowerCase().replace(/\s/g, "-")
+    : "";
+
   return (
     <div className={`candidate-card ${selected ? "selected" : ""}`}>
-      
-      {/* HEADER */}
+
+      {/* 🔹 HEADER */}
       <div className="card-header">
-        <h3>{candidate_name || `Candidate #${candidate.candidate_id}`}</h3>
+        <h3>{candidate_name || `Candidate #${candidate_id}`}</h3>
         <span className="rank-badge">#{rank}</span>
       </div>
 
-      {/* SCORE */}
+      {/* 🔹 SCORE + DECISION */}
       <div className="score-section">
         <div className="score">{score}</div>
-        <div className={`recommendation ${recommendation?.toLowerCase().replace(/\s/g, "-")}`}>
-          {recommendation}
+
+        <div className="badges">
+          {/* Decision Badge */}
+          {decision && (
+            <div className={`decision-badge ${decisionClass}`}>
+              {decision}
+            </div>
+          )}
+
+          {/* Recommendation Badge (optional legacy) */}
+          {recommendation && (
+            <div className={`recommendation ${recommendationClass}`}>
+              {recommendation}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* SUMMARY */}
-      <p className="summary">{summary}</p>
+      {/* 🔹 CONFIDENCE */}
+      {confidence !== undefined && (
+        <div className="confidence">
+          Confidence: {confidence}%
+        </div>
+      )}
 
-      {/* HIGHLIGHTS */}
+      {/* 🔹 SUMMARY */}
+      {summary && <p className="summary">{summary}</p>}
+
+      {/* 🔹 DECISION REASONS */}
+      {decision_reasons?.length > 0 && (
+        <div className="section">
+          <strong>🧠 Why this decision?</strong>
+          <ul>
+            {decision_reasons.map((reason, i) => (
+              <li key={i}>{reason}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* 🔹 STRENGTHS */}
       {highlights?.length > 0 && (
         <div className="section">
           <strong>✅ Strengths</strong>
@@ -45,7 +88,7 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
         </div>
       )}
 
-      {/* RISKS */}
+      {/* 🔹 RISKS */}
       {risks?.length > 0 && (
         <div className="section">
           <strong>⚠️ Risks</strong>
@@ -57,26 +100,35 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
         </div>
       )}
 
-      {/* SCORE BREAKDOWN */}
+      {/* 🔹 SCORE BREAKDOWN */}
       {score_breakdown && (
         <div className="section">
           <strong>📊 Score Breakdown</strong>
           <ul>
-            {Object.entries(score_breakdown).map(([k, v]) => (
-              <li key={k}>
-                {k.replace(/_/g, " ")}: {Math.round(v)}
+            {Object.entries(score_breakdown).map(([key, value]) => (
+              <li key={key}>
+                {formatKey(key)}: {Math.round(value)}
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* SELECT */}
-      <button onClick={onSelect}>
+      {/* 🔹 ACTION BUTTON */}
+      <button className="compare-btn" onClick={onSelect}>
         {selected ? "Deselect" : "Compare"}
       </button>
     </div>
   );
+};
+
+///////////////////////////////////////////
+// 🔧 Helper
+///////////////////////////////////////////
+const formatKey = (key) => {
+  return key
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 };
 
 export default CandidateCard;
