@@ -1,5 +1,9 @@
 import axiosClient from "./axiosClient"
 
 export const analyzeResume = (data) => {
-  return axiosClient.post("/resumes", data)
+  return axiosClient.post("/resumes", data, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
 }

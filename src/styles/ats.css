@@ -69,3 +69,15 @@
 .markdown-body {
   margin-top: 10px;
 }
+
+.file-preview {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #555;
+}
+
+.analyze-btn {
+  margin-top: 15px;
+  padding: 10px 15px;
+  font-weight: bold;
+}

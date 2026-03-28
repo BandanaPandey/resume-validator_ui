@@ -4,14 +4,17 @@ import CandidateInput from "./CandidateInput";
 const JobForm = ({ onSubmit }) => {
   const [jobDescription, setJobDescription] = useState("");
   const [candidates, setCandidates] = useState([
-    { name: "", resume: "" }
+    { name: "", resume: "", file: null }
   ]);
 
   /////////////////////////////////////////
   // Add Candidate
   /////////////////////////////////////////
   const addCandidate = () => {
-    setCandidates([...candidates, { name: "", resume: "" }]);
+    setCandidates([
+      ...candidates,
+      { name: "", resume: "", file: null }
+    ]);
   };
 
   /////////////////////////////////////////
@@ -27,18 +30,36 @@ const JobForm = ({ onSubmit }) => {
   /////////////////////////////////////////
   const updateCandidate = (i, field, value) => {
     const updated = [...candidates];
-    updated[i][field] = value;
+
+    // 🔥 If uploading file → clear resume text
+    if (field === "file") {
+      updated[i].file = value;
+      updated[i].resume = "";
+    } else if (field === "resume") {
+      updated[i].resume = value;
+      updated[i].file = null;
+    } else {
+      updated[i][field] = value;
+    }
+
     setCandidates(updated);
+  };
+
+  /////////////////////////////////////////
+  // Validation
+  /////////////////////////////////////////
+  const isValidCandidate = (c) => {
+    return (
+      (c.resume && c.resume.trim() !== "") ||
+      c.file instanceof File
+    );
   };
 
   /////////////////////////////////////////
   // Submit
   /////////////////////////////////////////
   const submit = () => {
-    // ✅ Filter empty resumes
-    const validCandidates = candidates.filter(
-      (c) => c.resume && c.resume.trim() !== ""
-    );
+    const validCandidates = candidates.filter(isValidCandidate);
 
     if (!jobDescription.trim()) {
       alert("Please enter job description");
@@ -46,13 +67,13 @@ const JobForm = ({ onSubmit }) => {
     }
 
     if (validCandidates.length === 0) {
-      alert("Please add at least one candidate");
+      alert("Please add at least one candidate (resume text or PDF)");
       return;
     }
 
     onSubmit({
-      jobDescription,          // ✅ FIXED KEY
-      candidates: validCandidates // ✅ structured candidates
+      jobDescription,   // ✅ matches API
+      candidates: validCandidates
     });
   };
 
@@ -73,6 +94,7 @@ const JobForm = ({ onSubmit }) => {
 
       {candidates.map((c, i) => (
         <div key={i} className="candidate-block">
+
           <CandidateInput
             data={c}
             onChange={(field, val) =>
@@ -80,17 +102,28 @@ const JobForm = ({ onSubmit }) => {
             }
           />
 
+          {/* 🔥 Show uploaded file */}
+          {c.file && (
+            <div className="file-preview">
+              📄 {c.file.name}
+            </div>
+          )}
+
           <button onClick={() => removeCandidate(i)}>
             Remove
           </button>
         </div>
       ))}
 
-      <button onClick={addCandidate}>+ Add Candidate</button>
+      <button onClick={addCandidate}>
+        + Add Candidate
+      </button>
 
       <br />
 
-      <button onClick={submit}>Analyze</button>
+      <button className="analyze-btn" onClick={submit}>
+        🚀 Analyze Candidates
+      </button>
     </div>
   );
 };

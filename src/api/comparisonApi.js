@@ -2,5 +2,9 @@
 import axiosClient from "./axiosClient";
 
 export const compareCandidates = (data) => {
-  return axiosClient.post("/compare_candidates", data);
+  return axiosClient.post("/compare_candidates", data, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
 };
