@@ -1,4 +1,5 @@
 import React from "react";
+import { downloadCandidateReport } from "../../api/reportApi";
 
 const CandidateCard = ({ candidate, onSelect, selected }) => {
   const {
@@ -16,6 +17,9 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
     score_breakdown
   } = candidate;
 
+  /////////////////////////////////////////
+  // Helpers
+  /////////////////////////////////////////
   const decisionClass = decision
     ? decision.toLowerCase().replace(/\s/g, "-")
     : "";
@@ -24,6 +28,14 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
     ? recommendation.toLowerCase().replace(/\s/g, "-")
     : "";
 
+  const formatKey = (key) =>
+    key
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  /////////////////////////////////////////
+  // UI
+  /////////////////////////////////////////
   return (
     <div className={`candidate-card ${selected ? "selected" : ""}`}>
 
@@ -38,14 +50,12 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
         <div className="score">{score}</div>
 
         <div className="badges">
-          {/* Decision Badge */}
           {decision && (
             <div className={`decision-badge ${decisionClass}`}>
               {decision}
             </div>
           )}
 
-          {/* Recommendation Badge (optional legacy) */}
           {recommendation && (
             <div className={`recommendation ${recommendationClass}`}>
               {recommendation}
@@ -114,21 +124,25 @@ const CandidateCard = ({ candidate, onSelect, selected }) => {
         </div>
       )}
 
-      {/* 🔹 ACTION BUTTON */}
-      <button className="compare-btn" onClick={onSelect}>
-        {selected ? "Deselect" : "Compare"}
-      </button>
+      {/* 🔹 ACTION BUTTONS */}
+      <div className="card-actions">
+
+        {/* Compare */}
+        <button className="compare-btn" onClick={onSelect}>
+          {selected ? "Deselect" : "Compare"}
+        </button>
+
+        {/* 🔥 Download PDF */}
+        <button
+          className="download-btn"
+          onClick={() => downloadCandidateReport(candidate)}
+        >
+          📄 Download Report
+        </button>
+
+      </div>
     </div>
   );
-};
-
-///////////////////////////////////////////
-// 🔧 Helper
-///////////////////////////////////////////
-const formatKey = (key) => {
-  return key
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
 };
 
 export default CandidateCard;
