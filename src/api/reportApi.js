@@ -33,6 +33,25 @@ export const downloadShortlistReport = async (candidates, jobDescription) => {
   triggerDownload(response.data, "top_candidates_report.pdf");
 };
 
+export const emailShortlistReport = async (
+  email,
+  candidates,
+  jobDescription
+) => {
+  try {
+    const response = await axiosClient.post("/reports/email_shortlist", {
+      email,
+      candidates,
+      job_description: jobDescription
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
 /////////////////////////////////////////
 // 🔧 Helper: Download File
 /////////////////////////////////////////

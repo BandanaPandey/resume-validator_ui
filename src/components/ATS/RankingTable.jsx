@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import CandidateComparison from "./CandidateComparison";
 import CandidateCard from "./CandidateCard";
-import { downloadShortlistReport } from "../../api/reportApi";
+import {
+  downloadShortlistReport,
+  emailShortlistReport
+} from "../../api/reportApi";
 
 const RankingTable = ({ data, jobDescription }) => {
   const [selected, setSelected] = useState([]);
+  const [email, setEmail] = useState("");
+  const [sending, setSending] = useState(false);
 
   /////////////////////////////////////////
   // Guard
@@ -29,7 +34,7 @@ const RankingTable = ({ data, jobDescription }) => {
   };
 
   /////////////////////////////////////////
-  // 🔥 Download Top 10
+  // 📄 Download Top 10
   /////////////////////////////////////////
   const handleDownload = () => {
     if (!data.length) {
@@ -37,9 +42,38 @@ const RankingTable = ({ data, jobDescription }) => {
       return;
     }
 
-    const topCandidates = data.slice(0, 10); // 🔥 Top 10
-
+    const topCandidates = data.slice(0, 10);
     downloadShortlistReport(topCandidates, jobDescription);
+  };
+
+  /////////////////////////////////////////
+  // 📩 Email Top 10
+  /////////////////////////////////////////
+  const handleEmail = async () => {
+    if (!email.trim()) {
+      alert("Please enter recruiter email");
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      const topCandidates = data.slice(0, 10);
+
+      await emailShortlistReport(
+        email,
+        topCandidates,
+        jobDescription
+      );
+
+      alert("📩 Report emailed successfully!");
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send email");
+    } finally {
+      setSending(false);
+    }
   };
 
   /////////////////////////////////////////
@@ -48,7 +82,7 @@ const RankingTable = ({ data, jobDescription }) => {
   return (
     <div className="ranking-container">
 
-      {/* 🔥 HEADER + DOWNLOAD */}
+      {/* 🔥 HEADER */}
       <div className="ranking-header">
         <h2>🏆 Candidate Rankings</h2>
 
@@ -57,7 +91,21 @@ const RankingTable = ({ data, jobDescription }) => {
         </button>
       </div>
 
-      {/* 🔹 Candidate Cards */}
+      {/* 📩 EMAIL SECTION */}
+      <div className="email-section">
+        <input
+          type="email"
+          placeholder="Enter recruiter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <button onClick={handleEmail} disabled={sending}>
+          {sending ? "Sending..." : "📩 Email Report"}
+        </button>
+      </div>
+
+      {/* 🔹 Candidate Grid */}
       <div className="candidate-grid">
         {data.map((candidate) => (
           <CandidateCard
