@@ -181,3 +181,38 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.actions-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.actions-row button {
+  padding: 8px 12px;
+  background: #1565c0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.actions-row button:hover {
+  background: #0d47a1;
+}
+
+.email-section {
+  margin-bottom: 10px;
+}
+
+.email-section input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.selected-info {
+  margin-bottom: 10px;
+  font-weight: bold;
+}

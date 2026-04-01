@@ -34,42 +34,71 @@ const RankingTable = ({ data, jobDescription }) => {
   };
 
   /////////////////////////////////////////
-  // 📄 Download Top 10
+  // 🔹 Top Candidates (Top 10)
   /////////////////////////////////////////
-  const handleDownload = () => {
-    if (!data.length) {
-      alert("No candidates available");
-      return;
-    }
+  const topCandidates = data.slice(0, 10);
 
-    const topCandidates = data.slice(0, 10);
+  /////////////////////////////////////////
+  // 📄 Download Top
+  /////////////////////////////////////////
+  const handleDownloadTop = () => {
     downloadShortlistReport(topCandidates, jobDescription);
   };
 
   /////////////////////////////////////////
-  // 📩 Email Top 10
+  // 📩 Email Top
   /////////////////////////////////////////
-  const handleEmail = async () => {
+  const handleEmailTop = async () => {
     if (!email.trim()) {
-      alert("Please enter recruiter email");
+      alert("Enter recruiter email");
+      return;
+    }
+
+    setSending(true);
+    try {
+      await emailShortlistReport(email, topCandidates, jobDescription);
+      alert("📩 Top candidates emailed!");
+      setEmail("");
+    } catch {
+      alert("Failed to send email");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  /////////////////////////////////////////
+  // 📄 Download Selected
+  /////////////////////////////////////////
+  const handleDownloadSelected = () => {
+    if (selected.length === 0) {
+      alert("Select at least one candidate");
+      return;
+    }
+
+    downloadShortlistReport(selected, jobDescription);
+  };
+
+  /////////////////////////////////////////
+  // 📩 Email Selected
+  /////////////////////////////////////////
+  const handleEmailSelected = async () => {
+    if (!email.trim()) {
+      alert("Enter recruiter email");
+      return;
+    }
+
+    if (selected.length === 0) {
+      alert("Select candidates first");
       return;
     }
 
     setSending(true);
 
     try {
-      const topCandidates = data.slice(0, 10);
-
-      await emailShortlistReport(
-        email,
-        topCandidates,
-        jobDescription
-      );
-
-      alert("📩 Report emailed successfully!");
+      await emailShortlistReport(email, selected, jobDescription);
+      alert(`📩 ${selected.length} candidate(s) emailed!`);
       setEmail("");
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Failed to send email");
     } finally {
       setSending(false);
@@ -82,30 +111,53 @@ const RankingTable = ({ data, jobDescription }) => {
   return (
     <div className="ranking-container">
 
-      {/* 🔥 HEADER */}
+      {/* HEADER */}
       <div className="ranking-header">
         <h2>🏆 Candidate Rankings</h2>
+      </div>
 
-        <button className="download-all-btn" onClick={handleDownload}>
-          📄 Download Top 10 Report
+      {/* 📄 TOP ACTIONS */}
+      <div className="actions-row">
+        <button onClick={handleDownloadTop}>
+          📄 Download Top 10
+        </button>
+
+        <button onClick={handleEmailTop} disabled={sending}>
+          {sending ? "Sending..." : "📩 Email Top 10"}
         </button>
       </div>
 
-      {/* 📩 EMAIL SECTION */}
+      {/* 📄 SELECTED ACTIONS */}
+      <div className="actions-row">
+        <button onClick={handleDownloadSelected}>
+          📄 Download Selected ({selected.length})
+        </button>
+
+        <button onClick={handleEmailSelected} disabled={sending}>
+          {sending
+            ? "Sending..."
+            : `📩 Email Selected (${selected.length})`}
+        </button>
+      </div>
+
+      {/* 📩 EMAIL INPUT */}
       <div className="email-section">
         <input
           type="email"
-          placeholder="Enter recruiter email"
+          placeholder="Recruiter email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-
-        <button onClick={handleEmail} disabled={sending}>
-          {sending ? "Sending..." : "📩 Email Report"}
-        </button>
       </div>
 
-      {/* 🔹 Candidate Grid */}
+      {/* SELECTED INFO */}
+      {selected.length > 0 && (
+        <p className="selected-info">
+          Selected: {selected.length} candidate(s)
+        </p>
+      )}
+
+      {/* GRID */}
       <div className="candidate-grid">
         {data.map((candidate) => (
           <CandidateCard
@@ -119,7 +171,7 @@ const RankingTable = ({ data, jobDescription }) => {
         ))}
       </div>
 
-      {/* 🔥 Comparison */}
+      {/* COMPARISON */}
       {selected.length >= 2 && (
         <CandidateComparison
           candidates={selected}
