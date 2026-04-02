@@ -216,3 +216,15 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
+
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.select-all input {
+  transform: scale(1.2);
+  cursor: pointer;
+}

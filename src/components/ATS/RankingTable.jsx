@@ -10,6 +10,7 @@ const RankingTable = ({ data, jobDescription }) => {
   const [selected, setSelected] = useState([]);
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
 
   /////////////////////////////////////////
   // Guard
@@ -17,26 +18,46 @@ const RankingTable = ({ data, jobDescription }) => {
   if (!data || data.length === 0) return null;
 
   /////////////////////////////////////////
-  // Toggle Select (max 3)
+  // 🔹 Top Candidates (limit 10)
+  /////////////////////////////////////////
+  const topCandidates = data.slice(0, 10);
+
+  /////////////////////////////////////////
+  // Toggle Select (manual selection)
   /////////////////////////////////////////
   const toggleSelect = (candidate) => {
     const exists = selected.find(
       (c) => c.candidate_id === candidate.candidate_id
     );
 
+    let updated;
+
     if (exists) {
-      setSelected(
-        selected.filter((c) => c.candidate_id !== candidate.candidate_id)
+      updated = selected.filter(
+        (c) => c.candidate_id !== candidate.candidate_id
       );
-    } else if (selected.length < 3) {
-      setSelected([...selected, candidate]);
+    } else {
+      updated = [...selected, candidate];
     }
+
+    setSelected(updated);
+
+    // 🔥 auto update selectAll checkbox
+    setSelectAll(updated.length === topCandidates.length);
   };
 
   /////////////////////////////////////////
-  // 🔹 Top Candidates (Top 10)
+  // 🔥 SELECT ALL TOGGLE
   /////////////////////////////////////////
-  const topCandidates = data.slice(0, 10);
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelected([]);
+      setSelectAll(false);
+    } else {
+      setSelected(topCandidates); // 🔥 select top 10
+      setSelectAll(true);
+    }
+  };
 
   /////////////////////////////////////////
   // 📄 Download Top
@@ -49,10 +70,7 @@ const RankingTable = ({ data, jobDescription }) => {
   // 📩 Email Top
   /////////////////////////////////////////
   const handleEmailTop = async () => {
-    if (!email.trim()) {
-      alert("Enter recruiter email");
-      return;
-    }
+    if (!email.trim()) return alert("Enter recruiter email");
 
     setSending(true);
     try {
@@ -71,8 +89,7 @@ const RankingTable = ({ data, jobDescription }) => {
   /////////////////////////////////////////
   const handleDownloadSelected = () => {
     if (selected.length === 0) {
-      alert("Select at least one candidate");
-      return;
+      return alert("Select at least one candidate");
     }
 
     downloadShortlistReport(selected, jobDescription);
@@ -82,18 +99,10 @@ const RankingTable = ({ data, jobDescription }) => {
   // 📩 Email Selected
   /////////////////////////////////////////
   const handleEmailSelected = async () => {
-    if (!email.trim()) {
-      alert("Enter recruiter email");
-      return;
-    }
-
-    if (selected.length === 0) {
-      alert("Select candidates first");
-      return;
-    }
+    if (!email.trim()) return alert("Enter recruiter email");
+    if (selected.length === 0) return alert("Select candidates first");
 
     setSending(true);
-
     try {
       await emailShortlistReport(email, selected, jobDescription);
       alert(`📩 ${selected.length} candidate(s) emailed!`);
@@ -116,7 +125,17 @@ const RankingTable = ({ data, jobDescription }) => {
         <h2>🏆 Candidate Rankings</h2>
       </div>
 
-      {/* 📄 TOP ACTIONS */}
+      {/* 🔥 SELECT ALL */}
+      <div className="select-all">
+        <input
+          type="checkbox"
+          checked={selectAll}
+          onChange={handleSelectAll}
+        />
+        <label>Select Top 10</label>
+      </div>
+
+      {/* TOP ACTIONS */}
       <div className="actions-row">
         <button onClick={handleDownloadTop}>
           📄 Download Top 10
@@ -127,7 +146,7 @@ const RankingTable = ({ data, jobDescription }) => {
         </button>
       </div>
 
-      {/* 📄 SELECTED ACTIONS */}
+      {/* SELECTED ACTIONS */}
       <div className="actions-row">
         <button onClick={handleDownloadSelected}>
           📄 Download Selected ({selected.length})
@@ -140,7 +159,7 @@ const RankingTable = ({ data, jobDescription }) => {
         </button>
       </div>
 
-      {/* 📩 EMAIL INPUT */}
+      {/* EMAIL INPUT */}
       <div className="email-section">
         <input
           type="email"
