@@ -1,70 +1,288 @@
-# Getting Started with Create React App
+# 🚀 AI-Powered ATS (Applicant Tracking System)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An intelligent **ATS platform** that analyzes resumes against job descriptions using **AI + semantic matching + scoring**, and ranks candidates with actionable insights.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+# ✨ Features
 
-### `npm start`
+## 🔐 Authentication
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+* JWT-based **Signup / Login**
+* User-specific data isolation
+* Secure API access
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧠 AI Skill Analysis
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Resume & Job skill extraction (AI + dictionary)
+* Semantic skill matching using embeddings
+* Skill normalization & deduplication
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📊 Advanced Scoring System
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Basic Match Score
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* % of matched skills
 
-### `npm run eject`
+### 2. Weighted Score
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+* Job-specific skill importance
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 3. Smart Score (Final Score)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Combines:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+* Skill match weight
+* Skill proficiency
+* Experience detection
+* Keyword relevance
+* Impact words
+* Penalties for:
 
-## Learn More
+  * Missing critical skills
+  * Weak proficiency
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🎯 Skill Intelligence
 
-### Code Splitting
+* 🔥 **Critical Missing Skills**
+* ⚠️ **Weak Skills (low proficiency)**
+* 🧠 **AI-based Skill Proficiency Detection**
+* 📈 Job-specific skill weighting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 🏆 Candidate Ranking
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* ATS-style ranking system
+* Smart scoring-based sorting
+* Rank assignment (1, 2, 3…)
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🤖 AI Features
 
-### Advanced Configuration
+* AI-generated candidate comparison
+* AI recruiter summary in email reports
+* Context-aware hiring recommendations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 📄 Reports & Sharing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+* Download **PDF reports**
+* Email:
 
-### `npm run build` fails to minify
+  * Top candidates
+  * Selected candidates
+* AI summary included in email body
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 🖥️ Frontend (React)
+
+* Job input + multiple candidates
+* Resume upload (PDF supported)
+* Candidate cards with:
+
+  * Score
+  * Decision (Hire / Reject)
+* Ranking table with:
+
+  * Select candidates
+  * Select All (Top 10)
+  * Bulk actions:
+
+    * Download
+    * Email
+* Candidate comparison view
+
+---
+
+# 🏗️ Architecture
+
+```text
+Frontend (React)
+   ↓
+Rails API (JWT Auth)
+   ↓
+AI + Services Layer
+   ↓
+PostgreSQL + pgvector
+```
+
+---
+
+# 🧩 Core Components
+
+## Backend (Rails)
+
+### Services
+
+* `SkillExtractionService`
+* `SemanticSkillMatcher`
+* `VectorSearchService`
+* `SkillProficiencyService`
+* `JobSkillWeighter`
+* `SmartScoreService`
+* `CandidateRanker`
+* `CandidateSummaryService`
+
+### Models
+
+* `User`
+* `Job`
+* `Candidate`
+* `Skill` (with embeddings)
+
+---
+
+## Frontend (React)
+
+### Pages
+
+* `Login`
+* `Signup`
+* `Dashboard`
+* `JobRankingPage`
+
+### Components
+
+* `JobForm`
+* `RankingTable`
+* `CandidateCard`
+* `CandidateComparison`
+
+---
+
+# 🔐 Authentication Flow
+
+```text
+Signup/Login → JWT Token → Stored in localStorage
+→ Sent via Authorization header
+→ Backend validates user
+```
+
+---
+
+# 🔄 User Flow
+
+```text
+Login → Dashboard
+→ Enter Job Description
+→ Add Candidates (text or PDF)
+→ Analyze
+→ View Rankings
+→ Select Candidates
+→ Download / Email Reports
+```
+
+---
+
+# 🧠 Smart Scoring Logic
+
+```text
+Final Score =
+  Weighted Skill Score
++ Proficiency Bonus
++ Experience Score
++ Keyword Match Score
++ Impact Score
+- Penalties (Critical Missing + Weak Skills)
+```
+
+---
+
+# 📦 API Endpoints
+
+## Auth
+
+* `POST /api/signup`
+* `POST /api/login`
+
+## Jobs
+
+* `POST /api/jobs`
+* `GET /api/jobs`
+
+## Reports
+
+* `POST /api/reports/email`
+* `POST /api/reports/download`
+
+---
+
+# 🛠️ Setup Instructions
+
+## Backend
+
+```bash
+bundle install
+rails db:create db:migrate
+rails server
+```
+
+## Frontend
+
+```bash
+npm install
+npm start
+```
+
+---
+
+# 🧪 Key Technologies
+
+* Ruby on Rails
+* React.js
+* PostgreSQL + pgvector
+* JWT Authentication
+* LLM Integration (OpenAI / Ollama)
+
+---
+
+# 🔥 Highlights
+
+* Production-style ATS system
+* AI-powered decision making
+* Recruiter-friendly workflows
+* Modular, scalable architecture
+
+---
+
+# 🚀 Future Improvements
+
+* OAuth (Google / LinkedIn)
+* Role-based access (Admin / Recruiter)
+* Job history & analytics
+* Bias detection
+* Real-time collaboration
+
+---
+
+# 👩‍💻 Author Notes
+
+This project evolved into a **full ATS system** with:
+
+* AI-driven matching
+* Recruiter workflows
+* Secure multi-user support
+* Smart scoring engine
+
+Use this as:
+
+* A learning project
+* A production base
+* A SaaS ATS foundation
+
+---
+
+# ⭐ Final Thought
+
+This is not just a resume matcher —
+it’s a **decision-making engine for hiring**.
