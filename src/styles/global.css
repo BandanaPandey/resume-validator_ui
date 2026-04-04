@@ -45,3 +45,22 @@ ul {
 li {
   margin-bottom: 6px;
 }
+
+.auth-container {
+  max-width: 300px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-container input {
+  padding: 8px;
+}
+
+.auth-container button {
+  padding: 8px;
+  background: #1565c0;
+  color: white;
+  border: none;
+}

@@ -1,28 +1,36 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import SkillGapAnalyzer from "./components/SkillGapAnalyzer/SkillGapAnalyzer";
-import JobRankingPage from "./pages/JobRankingPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+import AuthProvider from "./context/AuthContext";
+
 import "./styles/ats.css";
 
 function App() {
   return (
-    <Router>
-      <div className="container">
-        <h1>AI Resume Platform 🚀</h1>
-
-        {/* Navigation */}
-        <nav style={{ marginBottom: "20px" }}>
-          <Link to="/">Skill Gap</Link> |{" "}
-          <Link to="/ranking">ATS Ranking</Link>
-        </nav>
-
+    <AuthProvider>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<SkillGapAnalyzer />} />
-          <Route path="/ranking" element={<JobRankingPage />} />
+
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
-      </div>
-    </Router>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
