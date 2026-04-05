@@ -1,9 +1,9 @@
 import axiosClient from "./axiosClient";
 
-export const signup = (data) => {
+export const signupUser = (data) => {
   return axiosClient.post("/signup", data);
 };
 
-export const login = (data) => {
+export const loginUser = (data) => {
   return axiosClient.post("/login", data);
 };
